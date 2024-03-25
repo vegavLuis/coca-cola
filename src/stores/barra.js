@@ -5,7 +5,7 @@ export const useBarraStore = defineStore("barra", () => {
   const data = ref([
     {
       icon: "",
-      name: "Ver inventario",
+      name: "Inventario",
       to: "/inventario",
     },
     {

@@ -1,43 +1,129 @@
-import { ref, computed } from "vue";
+import { ref, onMounted, watch } from "vue";
 import { defineStore } from "pinia";
+import InventarioApi from "@/api/InventarioAPI.js";
 
 export const useInventarioStore = defineStore("inventario", () => {
-  const data = ref([
+  const datos = ref([]);
+  const headers = ref([
     {
-      Producto: "Coca-cola",
-      Submarca: "Zero",
-      Id: "154205",
-      Zona: "Floresta",
-      Alta: "15/02/2024",
+      key: "idInterno",
+      sortable: true,
+      title: "Id",
     },
     {
-      Producto: "Santa Clara",
-      Submarca: "Leche Entera",
-      Id: "812481",
-      Zona: "Los Reyes",
-      Alta: "15/01/2024",
+      key: "nombreProducto",
+      sortable: true,
+      title: "Nombre",
     },
     {
-      Producto: "Tequila",
-      Submarca: "Don Julio",
-      Id: "8123457",
-      Zona: "Chimalhuacan",
-      Alta: "13/05/2023",
+      key: "submarca",
+      sortable: true,
+      title: "Submarca",
     },
     {
-      Producto: "Whisky Johnnie Walker",
-      Submarca: "Red Label 700 ml",
-      Id: "813566",
-      Zona: "Chapultepec",
-      Alta: "25/12/2020",
+      key: "numeroInterno",
+      sortable: true,
+      title: "Numero Interno",
     },
     {
-      Producto: "Jugos",
-      Submarca: "Bebida Del Valle Frut con jugo Sabor Cítricos 2 L",
-      Id: "863112",
-      Zona: "La Paz",
-      Alta: "30/11/2015",
+      key: "zona",
+      sortable: true,
+      title: "Zona",
+    },
+    {
+      key: "fechaAlta",
+      sortable: true,
+      title: "Fecha de Alta",
+    },
+    {
+      key: "acciones",
+      sortable: true,
+      title: "Acciones",
     },
   ]);
-  return { data };
+  const dialog = ref(false);
+  const items = ref({
+    idInterno: "",
+    nombreProducto: "",
+    submarca: "",
+    numeroInterno: "",
+    zona: "",
+    fechaAlta: "",
+  });
+  const isNuevo = ref(true);
+
+  const getData = async () => {
+    await InventarioApi.findAllProducto()
+      .then(({ data }) => {
+        // console.log(data);
+        datos.value = data;
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const abrirDialog = (item) => {
+    if (item) {
+      dialog.value = true;
+      items.value = item;
+      isNuevo.value = false;
+    } else {
+      dialog.value = true;
+      isNuevo.value = true;
+    }
+  };
+  const cerrarDialog = () => {
+    dialog.value = false;
+    items.value = {};
+    getData();
+  };
+  const enviar = async (item) => {
+    if (!isNuevo.value) {
+      // console.log(item._id, item);
+      await InventarioApi.updateProducto(item._id, item)
+        .then((result) => {
+          console.log(result);
+          cerrarDialog();
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+      console.log("editar");
+    } else {
+      await InventarioApi.createProducto(item)
+        .then((result) => {
+          console.log(result);
+          cerrarDialog();
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+      console.log("crear");
+    }
+  };
+  const eliminar = (item) => {
+    InventarioApi.deleteProducto(item)
+      .then((result) => {
+        console.log(result);
+        cerrarDialog();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  onMounted(() => {
+    getData();
+  });
+  return {
+    datos,
+    headers,
+    dialog,
+    items,
+    abrirDialog,
+    cerrarDialog,
+    enviar,
+    eliminar,
+  };
 });

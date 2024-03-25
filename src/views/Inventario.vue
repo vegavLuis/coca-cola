@@ -1,10 +1,6 @@
 <script setup>
-import { ref } from "vue";
-import { useInventarioStore } from "@/stores/inventario.js";
-const store = useInventarioStore();
+import index from "@/views/inventario/Index.vue";
 </script>
 <template>
-  <h2 class="ma-4">Inventario</h2>
-  <v-data-table :items="store.data"></v-data-table>
+  <index></index>
 </template>
-<style></style>
