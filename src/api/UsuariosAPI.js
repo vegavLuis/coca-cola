@@ -1,33 +1,33 @@
 import api from "@/lib/axios";
 
 export default {
-  findAllProducto() {
+  findAllUsuarios() {
     const token = localStorage.getItem("AUTH_TOKEN");
-    return api.get("/productos", {
+    return api.get("/usuarios", {
       headers: {
         Authorization: `Baerer ${token}`,
       },
     });
   },
-  createProducto(data) {
+  createUsuarios(data) {
     const token = localStorage.getItem("AUTH_TOKEN");
-    return api.post("/productos", data, {
+    return api.post("/usuarios", data, {
       headers: {
         Authorization: `Baerer ${token}`,
       },
     });
   },
-  updateProducto(id, data) {
+  updateUsuarios(id, data) {
     const token = localStorage.getItem("AUTH_TOKEN");
-    return api.put("/productos/" + id, data, {
+    return api.put("/usuarios/" + id, data, {
       headers: {
         Authorization: `Baerer ${token}`,
       },
     });
   },
-  deleteProducto(id) {
+  deleteUsuarios(id) {
     const token = localStorage.getItem("AUTH_TOKEN");
-    return api.delete("/productos/" + id, {
+    return api.delete("/usuarios/" + id, {
       headers: {
         Authorization: `Baerer ${token}`,
       },
