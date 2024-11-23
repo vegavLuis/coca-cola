@@ -3,7 +3,10 @@ import { ref } from "vue";
 import { RouterLink, RouterView } from "vue-router";
 import logo1 from "./assets/logo.png";
 import { useBarraStore } from "./stores/barra.js";
+import { useAuthStore } from "./stores/auth";
+
 const store = useBarraStore();
+const authStore = useAuthStore();
 </script>
 
 <template>
@@ -13,7 +16,7 @@ const store = useBarraStore();
         <v-img :src="logo1" icon cover width="100%" height="100%"></v-img>
       </v-card>
     </v-app-bar>
-    <v-navigation-drawer>
+    <v-navigation-drawer v-if="authStore.isAuthenticated">
       <v-list v-for="item in store.data" :key="item.id">
         <router-link
           class="router-link-exact-active"
@@ -25,6 +28,8 @@ const store = useBarraStore();
           </v-list-item>
         </router-link>
       </v-list>
+      <!-- Botón de Cerrar Sesión (Solo visible cuando está autenticado) -->
+      <v-btn @click="authStore.logout" color="red" block> Cerrar sesión </v-btn>
     </v-navigation-drawer>
 
     <v-main>
